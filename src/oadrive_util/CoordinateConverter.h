@@ -97,7 +97,10 @@ angle.
 #define DEPTH_IMAGE_WIDTH 320
 namespace oadrive {
 namespace util {
-
+/*!
+   \brief The CoordinateConverter class This class converts between Birdview Pixels, Depth Pixel, Car Cords and world cords.
+   It also provides the Zero plane for the Depth image.
+ */
 class CoordinateConverter
 {
 public:
@@ -144,7 +147,7 @@ public:
   /*! Calculates pixel coordinates in bird view image from a 2d world position.*/
   cv::Point2f world2Pixel( const oadrive::core::ExtendedPose2d &car, const oadrive::core::ExtendedPose2d &point );
 
-  //! reads the config file
+  //! reads the config file. This config file can be generated with CameraCalibration
   void readConfigFile(std::string path);
 
   //! returns the number of meters per pixel used.

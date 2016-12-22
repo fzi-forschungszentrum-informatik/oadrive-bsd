@@ -1,11 +1,9 @@
 // this is for emacs file handling -*- mode: c++; indent-tabs-mode: nil -*-
 
 // -- BEGIN LICENSE BLOCK ----------------------------------------------
-// This file is part of the Open Autonomous Driving Library.
-//
 // This program is free software licensed under the CDDL
 // (COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0).
-// You can find a copy of this license in LICENSE.txt in the top
+// You can find a copy of this license in LICENSE in the top
 // directory of the source code.
 //
 // © Copyright 2016 FZI Forschungszentrum Informatik, Karlsruhe, Germany
@@ -47,14 +45,16 @@ DriverModule::DriverModule()
   , mDriving(false)
   , mInitializedTrajectory(false)
   , mTrajectoryEndReached(false)
+  , mLastImageStamp(boost::posix_time::microsec_clock::local_time())
+  , mLowFrameRate(false)
 {
 
   double SPEED_NORMAL = oadrive::util::Config::getDouble( "MissionControl", "SPEED_NORMAL", 0.6 );
 
    mMinSteeringSpeed = (float)oadrive::util::Config::getDouble( "Driver", "MIN_STEERING_SPEED", SPEED_NORMAL );
    mRatioMinMaxSteeringSpeedToMinMaxSteering = (mMaxSteeringSpeed - mMinSteeringSpeed) / (mMaxSteering - mMinSteering) ;
-
 }
+
 
 DriverModule::~DriverModule()
 {
@@ -123,6 +123,14 @@ void DriverModule::update( const ExtendedPose2d &carPose )
     return;
   }
 
+  //check if framerate is down....
+  boost::posix_time::time_duration frameDiff = boost::posix_time::microsec_clock::local_time() - mLastImageStamp;
+  if(frameDiff.total_milliseconds() > 500) {
+      //slow down if framerate is low
+      mLowFrameRate = true;
+      LOGGING_INFO( controlLogger, "Framerate is dropping... slow motion!" << endl );
+  }
+
   mCurrentPose = carPose;
   if( mDriving && mInitializedTrajectory )
   {
@@ -168,6 +176,10 @@ void DriverModule::update( const ExtendedPose2d &carPose )
 
       // actual driving speed is the minimum of trajectory and steering speed
       mCurrentSpeed = std::min(recommendedTrajectorySpeed, recommendedSteeringSpeed);
+      if(mLowFrameRate) {
+        mCurrentSpeed = std::min(0.16f, mCurrentSpeed);
+        std::cout << "WARNING: FRAME RATE IS VERY LOW! (Bad Camera Update rate?)" << std::endl;
+      }
 
       // error check for NaN speed
       if(mCurrentSpeed != mCurrentSpeed){
@@ -253,6 +265,17 @@ ExtendedPose2d DriverModule::getCarPose()
   ExtendedPose2d tmp;
   mtx.lock();
   tmp = mCurrentPose;
+
+  boost::posix_time::time_duration frameDiff = boost::posix_time::microsec_clock::local_time() - mLastImageStamp;
+  mLastImageStamp = boost::posix_time::microsec_clock::local_time();
+
+  if(mLowFrameRate && frameDiff.total_milliseconds() < 300)
+  {
+      //Framerate is ok again
+      mLowFrameRate = false;
+
+      LOGGING_INFO( controlLogger, "Framerate is good again!" << endl );
+  }
   mtx.unlock();
   return tmp;
 }

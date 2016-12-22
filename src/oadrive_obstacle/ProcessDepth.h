@@ -47,7 +47,9 @@
 #include <oadrive_world/Environment.h>
 namespace oadrive{
 namespace obstacle{
-
+/*!
+   \brief The ProcessDepth class process the Depth image. (It substract a reference Image and after that it look for blobs. From this blobs it converts some pixel into objects. Look into get Objects findObjects)
+ */
 class ProcessDepth
 {
 public:
@@ -58,7 +60,9 @@ public:
   //! \brief processImage processes the depthImage from segmenting to enviroment
   //! \param image depthImage
   void processDepthImageDebug(cv::Mat image);
-
+  //! \brief getObjects starting point of the depth image processing
+  //! \param image Depth image
+  //! \return Objects in Car? cords
   ExtendedPose2dVectorPtr getObjects(cv::Mat image);
 
   /*!

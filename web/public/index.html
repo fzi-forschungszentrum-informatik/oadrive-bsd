@@ -870,9 +870,9 @@ $( document ).ready(function() {
   
   socket.on('ENTERED_CROSSING', function (entered_crossing) {
     btnDirectionsActive();
+    $('.btnOverlay').css('display', 'none');
     setTimeout(function () {
       hideDirections();
-      $('.btnOverlay').css('display', 'none');
     }, 3000);
     /*$('#commandLeft').removeClass('tooltipped');
     $('#commandStraight').removeClass('tooltipped');

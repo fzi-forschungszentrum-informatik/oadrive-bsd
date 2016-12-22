@@ -51,7 +51,7 @@ using namespace oadrive::core;
 EnvironmentPainter::EnvironmentPainter()
 {
   mDrawEventRegions = Config::getBool( "EnvironmentPainter", "drawEventRegions", true );
-  mDrawHistory = Config::getBool( "EnvironmentPainter", "drawHistory", true );
+  //mDrawHistory = Config::getBool( "EnvironmentPainter", "drawHistory", true );
   mDrawObstacleDistances = Config::getBool( "EnvironmentPainter",
       "drawObstacleDistances", false );
 
@@ -588,10 +588,10 @@ cv::Mat EnvironmentPainter::getEnvAsImage( Environment* env, double x, double y,
   // draw patches as rectangles:
   drawPatches( env, img, x, y, radius, pixelsPerMeter );
 
-  if(mDrawHistory)
+  /*if(mDrawHistory)
   {
     drawHistory( env, img, x, y, radius, pixelsPerMeter );
-  }
+  }*/
 //  drawTrajectory( img,  x,y ,radius,pixelsPerMeter, env->mRawTrajectory,
 //                  cv::Scalar( 255, 255, 255 ), cv::Scalar( 0, 128, 128 ) );
   size_t currentIndex = env->mDriver->getCurrentTrajectoryIndex();

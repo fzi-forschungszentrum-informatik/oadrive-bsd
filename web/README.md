@@ -80,16 +80,19 @@ also z.B.
 Bedienung
 ==================
 Auto rausgefahren
-- Einfach wieder auf Fahrbahn stellen und kurz warten
+- Stop per Jury Modul
+- Auto wieder auf Fahrbahn setzen
+- Maneuverliste, Request State und Start per Jury Modul
 
 Spiel stoppen
 - Stop über Admin-Interface
 
 Spiel (neu) starten
-- Spiel starten über Admin-Interface
-- Autos übers Jury Modul starten
+(- Sicherstellen, dass Autos per Stop aus Jury Modul gestoppt wurden)
+- Spiel neu starten über Admin-Interface
+- Autos übers Jury Modul starten (Maneuverliste, Request State und Start)
 
 Teams wechseln
-- Environment Reset über Admin-Interface
 - Teams switchen über Admin-Interface
-- Autos über Jury Modul starten
+- Spiel neu starten über Admin-Interface
+- Autos über Jury Modul starten (Maneuverliste, Request State und Start)

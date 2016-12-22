@@ -53,7 +53,7 @@ namespace world{
 
 PatchStitcher::PatchStitcher()
   : mMaximumAngle( M_PI*0.1 )
-  , mMinimumDistBetweenCrossings( 1.9 )
+  , mMinimumDistBetweenCrossings( 1.7 )
 {
 }
 
@@ -189,6 +189,13 @@ bool PatchStitcher::mergeIntoList( PatchPtr newPatch )
   PatchPtr referencePatch = findReferencePatchFor( newPatch );
   if( referencePatch )
   {
+    if( newPatch->getPatchType() == CROSS_SECTION )
+    {
+      LOGGING_WARNING( worldLogger, "New CROSS_SECTIION."
+          << endl );
+      LOGGING_WARNING( worldLogger, referencePatch->getPatchType() 
+          << endl );
+    }
     // TODO: Maybe disallow patch updates if the car has already driven onto the patch.
     if( referencePatch->getPatchType() == newPatch->getPatchType() )
     {
@@ -315,6 +322,7 @@ PatchPtr PatchStitcher::findReferencePatchFor( PatchPtr patch )
   }
   if( patch->getPatchType() != PARKING )
   {
+        LOGGING_INFO( worldLogger, "0" );
     const PatchPtrList* patches = Environment::getInstance()->getStreet();
     PatchPtr found;
 
@@ -324,7 +332,7 @@ PatchPtr PatchStitcher::findReferencePatchFor( PatchPtr patch )
         it != patches->rend(); it ++ )
     {
       // If the checked patch is a STRAIGHT patch, angles must match:
-      if( (*it)->getPatchType() == STRAIGHT )
+      if( patch->getPatchType() == STRAIGHT && (*it)->getPatchType() == STRAIGHT )
       {
         // If the angles aren't similar, skip:
         float yawDiff = Environment::angleModPi(
@@ -337,6 +345,7 @@ PatchPtr PatchStitcher::findReferencePatchFor( PatchPtr patch )
       // Check if the patches "overlap", i.e. the center of one patch is inside the other patch:
       if( (*it)->isPointInside( patch->getPose() ) || (patch)->isPointInside( (*it)->getPose() ) )
       {
+        LOGGING_INFO( worldLogger, "1" );
         if( (*it)->getPatchType() != CROSS_SECTION )
         {
           // If we've already found a CROSS_SECTION which could be a reference patch,
@@ -353,14 +362,17 @@ PatchPtr PatchStitcher::findReferencePatchFor( PatchPtr patch )
             }
           }
         } else {
+        LOGGING_INFO( worldLogger, "2" );
           double dist = (*it)->calcDistTo( patch );
           if( found && found->getPatchType() != CROSS_SECTION ) // overwrite non-CROSS_SECTIONs:
           {
+        LOGGING_INFO( worldLogger, "3" );
             found = *it;
             minDist = dist;
           } else {
             if( dist < minDist )
             {
+        LOGGING_INFO( worldLogger, "4" );
               found = *it;
               minDist = dist;
             }
