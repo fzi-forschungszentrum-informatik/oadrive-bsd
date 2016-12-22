@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <title>Vote</title>
+      <!--Import Google Icon Font-->
+      <link href="css/materialIcons.css" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+      <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=520, user-scalable=no" />
+
+      <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+	<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="/favicon-194x194.png" sizes="194x194">
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="/manifest.json">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="apple-mobile-web-app-title" content="kacadu">
+	<meta name="application-name" content="kacadu">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+<style>
+.w500 { 
+    width: 510px;
+    margin: auto;
+}
+.overlap {
+	width: 470px;
+	position: absolute;
+    top: 350px;
+    left: 20px;
+    text-align: center;
+}
+.controlbox {
+  margin-top: 10px;
+  padding: 5px 10px 5px 10px;
+}
+.btnOverlay {
+  position: absolute;
+  top: 0px;
+  left: 35px;
+  height: 190px;
+  line-height: 190px;
+  color: white;
+  width: 400px;
+  background-color: grey;
+  text-align: center;
+  z-index:9999;
+  display: none;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12) !important;
+}
+.drivingLeft {
+  position: absolute;
+  top: 160px;
+  left: 197px;
+  display: none;
+}
+.drivingRight {
+  position: absolute;
+  top: 160px;
+  left: 242px;
+  display: none;
+}
+.drivingStraight {
+  position: absolute;
+  top: 150px;
+  left: 228px;
+  display: none;
+}
+.drivingTurn {
+  position: absolute;
+  top: 160px;
+  left: 224px;
+  display: none;
+}
+.drivingBoost {
+  position: absolute;
+  top: 295px;
+  left: 232px;
+  display: none;
+}
+.controlImage {
+  margin-top: 12px;
+}
+.boostImage {
+  width: 34px;
+  height: 39px;
+  background-image: url(buttons/boost2.png);
+  margin-left: 7px;
+}
+.turnImage {
+  width: 45px;
+  height: 39px;
+  background-image: url(buttons/turn2.png);
+  margin-left: 2px;
+}
+.leftImage {
+  width: 61px;
+  height: 39px;
+  background-image: url(buttons/left2.png);
+}
+.straightImage {
+  width: 44px;
+  height: 49px;
+  background-image: url(buttons/straight2.png);
+}
+.rightImage {
+  width: 61px;
+  height: 39px;
+  background-image: url(buttons/right2.png);
+}
+.btn-largerTurn {
+  height: 64px;
+  line-height: 66px;
+}
+.btn-largerStraight {
+  height: 74px;
+  line-height: 76px;
+  margin: 0 20px;
+}
+.btn-huge {
+  height: 84px;
+  line-height: 29px;
+}
+.verticalBottom {
+  vertical-align: bottom;
+}
+.verticalProgress {
+  width: 50px;
+  height: 84px;
+  margin: 0 5px !important;
+}
+.verticalProgressIndicator {
+  width: 50px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  top: auto !important;
+  transition: height .3s linear !important;
+}
+</style>
+    </head>
+
+    <body onload="init();">
+      <!--Import jQuery before materialize.js-->
+      <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+      <script type="text/javascript" src="js/jquery.cookie.js"></script>
+      <script type="text/javascript" src="js/materialize.min.js"></script>
+      <script type="text/javascript" src="js/easeljs-0.8.2.min.js"></script>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  
+
+
+       <script type="text/javascript">
+       
+       
+       ///////
+       /// control button color behavior
+       
+       function btnAllDisable() {
+    	   $('#commandLeft').addClass("disabled");
+    	   $('#commandStraight').addClass("disabled");
+    	   $('#commandRight').addClass("disabled");
+    	   $('#commandTurn').addClass("disabled");
+    	   $('#commandBoost').addClass("disabled");
+       }
+       
+       function btnAllActive() {
+    	   $('#commandLeft').removeClass("disabled");
+    	   $('#commandStraight').removeClass("disabled");
+    	   $('#commandRight').removeClass("disabled");
+    	   $('#commandTurn').removeClass("disabled");
+    	   $('#commandBoost').removeClass("disabled");    	   
+       }
+       
+       function btnDirectionsActive() {
+         $('#commandLeft').removeClass("disabled");
+  	     $('#commandStraight').removeClass("disabled");
+    	 $('#commandRight').removeClass("disabled");
+       }
+       
+       function hideDirections() {
+         $('.drivingLeft').css('display', 'none');
+         $('.drivingStraight').css('display', 'none');
+         $('.drivingRight').css('display', 'none');
+         $('.drivingTurn').css('display', 'none');
+         $('.drivingBoost').css('display', 'none');
+         
+       }
+       
+       function btnThisLocked(btn) {
+    	   $(btn).addClass("disabled");
+    	   //$(btn).attr("class","waves-effect waves-teal btn-flat");
+    	  
+       }
+       
+       function btnSelected(btn) {
+         $(btn).addClass("cyan lighten-1");
+       }
+       
+       function btnAllNotSelected() {
+         $('#commandLeft').removeClass("cyan lighten-1");
+         $('#commandStraight').removeClass("cyan lighten-1");
+         $('#commandRight').removeClass("cyan lighten-1");
+       }
+       
+       
+       ///
+       
+
+       
+
+       
+
+
+
+
+       var PIXEL_PER_METER = 100.0;
+       var drawing = true; //wait until we loaded everthing
+       var stage;
+       var streetCont;
+       var fireCont;
+       var fireBMP;
+       var otherCar; // = {"x": 5.0,"y": 2.0, "distance": 4.22305};
+     	var lastObjects;
+ 		var carName; //whatś my name lalalallala
+ 		var checkpoint;
+ 		var btnDisabled = false;
+       
+       //var env = {"car": {"type": "car","x": 1.0,"y": 1.0,"yaw": 0},"patches": [{"type": "patch","id": 3865,"patchType": 0,"x": 2.0,"y": 0.0,"yaw": 0} ,{"type": "patch","id": 3873,"patchType": 0,"x": 3.0,"y": -1.0,"yaw": 0} ,{"type": "patch","id": 3911,"patchType": 0,"x": 10.628297307785937,"y": -6.0299757889875805,"yaw": 0} ,{"type": "patch","id": 3933,"patchType": 0,"x": 10.992223765361107,"y": -6.0282870425248145,"yaw": 0} ,{"type": "patch","id": 3958,"patchType": 0,"x": 11.28409069472815,"y": -6.0286701845299637,"yaw": 0} ,{"type": "patch","id": 3997,"patchType": 0,"x": 11.557677367017963,"y": -6.0159200333778262,"yaw": 0} ,{"type": "patch","id": 4024,"patchType": 0,"x": 12.001432703130142,"y": -6.0055880304875284,"yaw": 0} ,{"type": "patch","id": 4063,"patchType": 0,"x": 12.349242613707966,"y": -6.0079110184149584,"yaw": 0} ,{"type": "patch","id": 4116,"patchType": 0,"x": 12.622742135434219,"y": -6.0192750555156582,"yaw": -0.02089925275120761} ]};
+       
+       //var env = {"car": {"type": "car","x": 0,"y": 0,"yaw": -0.011592690144674367},"patches": [{"type": "patch","id": 2,"patchType": 0,"x": 1.4445459493023847,"y": 0.16738891456191743,"yaw": 0} ,{"type": "patch","id": 5,"patchType": 0,"x": 1.1665776842410223,"y": 0.18571741939624831,"yaw": 0} ]};
+       
+       var env = {"car": {"type": "car","x": 1.0,"y": 1.0,"yaw": 1.5356754064559937},"patches": [{"type": "patch","id": 2698,"patchType": 0,"x": -1.5577599589934408,"y": -2.9466414421128833,"yaw": 0} ,{"type": "patch","id": 2750,"patchType": 0,"x": -1.8755600460411539,"y": -2.9422660070713746,"yaw": 0} ,{"type": "patch","id": 2792,"patchType": 0,"x": -2.2049582468747126,"y": -2.9373722175423054,"yaw": 0} ,{"type": "patch","id": 2828,"patchType": 0,"x": -2.5296536159998695,"y": -2.9307250396266769,"yaw": 0} ,{"type": "patch","id": 2867,"patchType": 0,"x": -2.8156655586043886,"y": -2.9284621970231144,"yaw": 0} ,{"type": "patch","id": 2920,"patchType": 0,"x": -3.111939433321075,"y": -2.9316389186955774,"yaw": -0.0064021817030951627} ,{"type": "patch","id": 2988,"patchType": 1,"x": -3.8843825115006498,"y": -2.9127692356034305,"yaw": 0} ,{"type": "patch","id": 3544,"patchType": 0,"x": -4.168555017685236,"y": -2.2843720428984375,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4000,"patchType": 0,"x": -3.8595512988839573,"y": -1.9985472861691504,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4092,"patchType": 0,"x": -3.867624026399346,"y": -1.7090206315274978,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4298,"patchType": 0,"x": -3.8641467616773411,"y": -1.4364011530925149,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4413,"patchType": 0,"x": -3.8778645647335255,"y": -1.1583529980743332,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4433,"patchType": 0,"x": -3.8933777170634141,"y": -0.89805725570149852,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4539,"patchType": 0,"x": -3.8921210530797001,"y": -0.55644986718467027,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4873,"patchType": 1,"x": -3.924688694244364,"y": 0.16965953954365512,"yaw": 1.5707963705062866} ]};
+       
+       function rad2deg(radians) {
+    	   return -1.0 * radians * (180/Math.PI);
+       }
+       
+       function generateGrid() {
+    	   
+    	   var length = PIXEL_PER_METER * 100;
+    	   var count = 50;
+    	   var start = -1* count;
+    	   //X
+    	   var i;
+    	   for(i=start; i < count; i++) {
+    		  	var rect = new createjs.Shape();
+    		  	
+    		  	if(i == 0) {
+    		  		//rect.graphics.beginFill("green").drawRect(0, 0, 4, length);
+    		  		rect.graphics.beginFill("grey").drawRect(0, 0, 4, length);
+    		  	} else {
+    		  		rect.graphics.beginFill("grey").drawRect(0, 0, 1, length);
+    		  	}
+    			
+
+   			  	rect.regY = length/2;
+   			  
+   			  	rect.x = i* PIXEL_PER_METER;
+   				rect.y = 0;
+   			
+   			  	streetCont.addChild(rect);
+    	   }
+    	   
+    	   var j;
+    	   for(j=start; j < count; j++) {
+    			var rect = new createjs.Shape();
+    			
+    			if(j == 0) {
+    				//rect.graphics.beginFill("red").drawRect(0, 0, length, 4);
+    				rect.graphics.beginFill("grey").drawRect(0, 0, length, 4);
+    			} else {
+    				rect.graphics.beginFill("grey").drawRect(0, 0, length, 1);
+    			}
+    			
+
+   				rect.regX = length/2;
+   			  
+   			  	rect.y = j* PIXEL_PER_METER;
+   				rect.x = 0;
+
+   			  streetCont.addChild(rect);
+    	   }
+       }
+       
+       function init() {
+     		 stage = new createjs.Stage("c");
+      		stage.regX = -250;
+     		stage.regY = -250;
+     		
+     		
+     		streetCont = new createjs.Container();
+     		stage.addChild(streetCont);
+     		
+     		
+     		
+     		var carRect = new createjs.Shape();
+     		carRect.graphics.beginStroke("red").drawRect(0, 0, 100, 50);
+
+     		carRect.regX = 100/2;
+     		carRect.regY = 50/2;
+     		carRect.rotation = -90;
+     		
+
+     		//stage.addChild(carRect);
+
+     	     var image = new Image();
+            image.src = "res/Team_KACADU_Logo_Bird.png";
+            image.onload = handleILKacadu;  
+     		
+     		 
+         }
+       
+       
+       function handleILKacadu(event) {
+    	   
+    	   var image = event.target;
+           kacBMP = new createjs.Bitmap(image);
+           kacBMP.regX = 620;
+           kacBMP.regY = 620;
+           kacBMP.scaleX = 0.25;
+           kacBMP.scaleY = 0.25;
+           kacBMP.x = 0;
+           kacBMP.y = -75;
+           
+           var kacCont = new createjs.Container();
+    		stage.addChild(kacCont);
+           
+    		kacCont.addChild(kacBMP)
+           stage.update();
+    		kacCont.removeAllChildren();
+    	   
+    	   
+    	   //next image
+    	   var nextImage = new Image();
+    	   nextImage.src = "res/fire.svg";
+    	   nextImage.onload = handleILfire;
+       }
+       
+       function handleILfire(event) {
+    		
+    	   var image = event.target;
+           fireBMP = new createjs.Bitmap(image);
+           fireBMP.regX = 35;
+           fireBMP.regY = 35;
+           fireBMP.rotation = 180;
+           fireBMP.x = 0;
+           fireBMP.y = 55;
+
+           
+     	  fireCont = new createjs.Container();
+     
+     	//fireCont.y = -100;
+     	  
+     	 // var bounds = fireCont.getBounds();
+     	  
+     	 //fireCont.scaleX = 100 / bounds.width;
+     	//fireCont.scaleY = 100 / bounds.height;
+     	
+     	stage.addChild(fireCont);
+     	  
+     	  
+    	   
+    	   //next image
+    	   var nextImage = new Image();
+    	   nextImage.src = "res/car.svg";
+    	   nextImage.onload = handleILcar;
+       }
+       function handleILcar(event) {
+           var image = event.target;
+           var carBMP = new createjs.Bitmap(image);
+           carBMP.x = 0;
+     	  carBMP.y = 0;
+     	  carBMP.regX = 256;
+     	  carBMP.regY = 256;
+     	  carBMP.rotation = 90;
+     	  
+     	  var car = new createjs.Container();
+     	  car.addChild(carBMP);
+     	  
+     	  var bounds = car.getBounds();
+     	  
+     	  car.scaleX = 100 / bounds.width;
+     	  car.scaleY = 100 / bounds.height;
+     	  
+           stage.addChild(car);
+           
+           drawing = false;
+           
+           
+           
+           
+           
+           //drawEnv(env);
+
+
+           
+       }
+       
+   
+
+ function drawEnv(objects) {
+	 
+	 if(drawing == true) {
+		 return;
+	 }	  
+	 
+	 
+	 //make everthing clean
+	 streetCont.removeAllChildren();
+	streetCont.x = 0;
+	streetCont.y = 0;
+	streetCont.regX = 0;
+	streetCont.regY = 0;
+	streetCont.rotation = 0;
+	
+	generateGrid();
+
+	 
+	objects.patches.forEach(function(patch) {
+			 
+	 var x = patch.x * PIXEL_PER_METER;
+	 var y = patch.y * PIXEL_PER_METER;
+	 
+	 var width;
+	 var heigth;
+	 
+	 //oadrive definitions:
+	 //enum PatchType { STRAIGHT=0, CROSS_SECTION=1, PARKING=2 };
+	 //const float PATCH_WIDTHS[numPatchTypes] = { 1.0, 1.0, 0.47 };
+	//const float PATCH_LENGTHS[numPatchTypes] = { 0.25, 1.0, 0.7853 };
+	 switch(patch.patchType) {
+	    case 0:
+			width = 1.0 * PIXEL_PER_METER; 
+			heigth = 0.25 * PIXEL_PER_METER;
+	        break;
+	    case 1:
+	    	width = 1.0 * PIXEL_PER_METER; 
+			heigth = 1.0 * PIXEL_PER_METER;
+	        break;
+	    case 2:
+	    	width = 0.47 * PIXEL_PER_METER; 
+			heigth = 0.7853 * PIXEL_PER_METER;
+	        break;
+	    default:
+	    	width = 0; 
+			heigth = 0;
+		}
+	 
+	
+	  var degree = rad2deg(patch.yaw);
+	 
+	  var rect = new createjs.Shape();
+	  rect.graphics.beginStroke("blue").drawRect(0, 0, heigth, width);
+
+	  rect.regX = heigth/2;
+	  rect.regY = width/2;
+	  rect.rotation = 360-degree;
+	  
+	  rect.x = x;
+	  rect.y = y;
+	  streetCont.addChild(rect);
+			 
+	});
+	
+	
+	
+	
+	
+	
+	
+	 
+	
+	//orientation to the car
+	
+	var carDeg = rad2deg(objects.car.yaw);
+	var carX = objects.car.x * PIXEL_PER_METER;	
+	var carY = objects.car.y * PIXEL_PER_METER;	
+	
+	var carRect = new createjs.Shape();
+	carRect.graphics.beginStroke("green").drawRect(0, 0, 100, 50);
+
+	carRect.regX = 100/2;
+	carRect.regY = 50/2;
+	carRect.rotation = 360-carDeg;
+	carRect.x = carX;
+	carRect.y = carY;
+	
+
+	//streetCont.addChild(carRect);
+	
+	
+	streetCont.x = 0;
+	streetCont.y = 0;
+	streetCont.regX = carX;
+	streetCont.regY = carY;
+	streetCont.scaleY = -1;
+	streetCont.rotation = -carDeg+270;
+	
+	
+///////////////////
+	/// Draw the other car
+	
+	if(typeof otherCar != 'undefined') {
+		
+		var alpha = 1.0;
+		var circleCoordX = otherCar.x * PIXEL_PER_METER;
+		var circleCoordY = otherCar.y * PIXEL_PER_METER;
+		var lineEndX = otherCar.x * PIXEL_PER_METER;
+		var lineEndY = otherCar.y * PIXEL_PER_METER;
+		var angle = Math.atan2(otherCar.y - objects.car.y, otherCar.x - objects.car.x);
+		
+		var lineStartX =  (objects.car.x + 0.5 * Math.cos(angle)) * PIXEL_PER_METER;
+		var lineStartY = ( objects.car.y + 0.5 * Math.sin(angle)) * PIXEL_PER_METER;
+		
+		//needed for hittest
+		var stageRect = new createjs.Shape();
+		stageRect.graphics.beginFill("green").drawRect(0, 0, 500, 500);
+		stageRect.alpha = 0.0;
+		stageRect.regX = 250;
+		stageRect.regY = 250;
+		stage.addChild(stageRect);
+		  
+		  
+		
+		var localCoord = streetCont.localToGlobal(circleCoordX, circleCoordY);
+
+		
+		if(stageRect.hitTest(localCoord.x, localCoord.y) == false) {
+			alpha = 0.5;
+			circleCoordX =  (objects.car.x + 0.8 * Math.cos(angle)) * PIXEL_PER_METER;
+			circleCoordY = ( objects.car.y + 0.8 * Math.sin(angle)) * PIXEL_PER_METER;
+			
+			lineStartX =  (objects.car.x + 1.1 * Math.cos(angle)) * PIXEL_PER_METER;
+			lineStartY = ( objects.car.y + 1.1 * Math.sin(angle)) * PIXEL_PER_METER;
+			
+			
+		}
+		
+		var targetCont = new createjs.Container();
+        var circleCont = new createjs.Container();
+        
+        targetCont.addChild(circleCont);
+        
+        
+        var circle = new createjs.Shape();
+        circle.graphics.beginFill("red").drawCircle(0, 0, 30);
+        circle.alpha = alpha;
+        circleCont.addChild(circle);
+		
+        
+        
+        targetCont.addChild(circleCont);
+        
+        
+        targetCont.x = circleCoordX;
+        targetCont.y =  circleCoordY;
+
+        
+        var textCont = new createjs.Container();
+        var dist = otherCar.distance.toFixed(1).toString() + " m";
+        var text = new createjs.Text(dist, "18px Roboto", "#ffffff");
+        text.textAlign = "center"
+         text.textBaseline = "middle";
+        textCont.addChild(text);
+        var bText = textCont.getBounds();
+        textCont.regX = 0;
+        textCont.regY = -1* (bText.height /4) + 4.5;
+        textCont.scaleY = -1;
+        textCont.rotation = 270;
+
+
+        targetCont.addChild(textCont);
+        
+        var line = new createjs.Shape();
+        line.graphics.setStrokeStyle(3);
+        line.graphics.beginStroke("red");
+        line.graphics.moveTo(lineStartX, lineStartY);
+        line.graphics.lineTo(lineEndX, lineEndY);
+        line.graphics.endStroke();
+        line.alpha = alpha;
+        streetCont.addChild(line);
+        streetCont.addChild(targetCont);
+	}
+	
+	
+	
+	
+	/////
+	
+	///////////////////
+	/// Draw checkpoint
+	
+	if(typeof checkpoint != 'undefined') {
+		
+		var cp_alpha = 1.0;
+		var cp_circleCoordX = checkpoint.x * PIXEL_PER_METER;
+		var cp_circleCoordY = checkpoint.y * PIXEL_PER_METER;
+		var cp_lineEndX = checkpoint.x * PIXEL_PER_METER;
+		var cp_lineEndY = checkpoint.y * PIXEL_PER_METER;
+		var cp_angle = Math.atan2(checkpoint.y - objects.car.y, checkpoint.x - objects.car.x);
+		
+		var cp_lineStartX =  (objects.car.x + 0.5 * Math.cos(angle)) * PIXEL_PER_METER;
+		var cp_lineStartY = ( objects.car.y + 0.5 * Math.sin(angle)) * PIXEL_PER_METER;
+		
+		//needed for hittest
+		var cp_stageRect = new createjs.Shape();
+		cp_stageRect.graphics.beginFill("green").drawRect(0, 0, 500, 500);
+		cp_stageRect.alpha = 0.0;
+		cp_stageRect.regX = 250;
+		cp_stageRect.regY = 250;
+		stage.addChild(cp_stageRect);
+		  
+		  
+		
+		var cp_localCoord = streetCont.localToGlobal(cp_circleCoordX, cp_circleCoordY);
+
+		
+		if(cp_stageRect.hitTest(cp_localCoord.x, cp_localCoord.y) == false) {
+			cp_alpha = 0.5;
+      deltaX = 0.35;
+			cp_circleCoordX =  (deltaX + (objects.car.x + (deltaX + 0.8) * Math.cos(cp_angle))) * PIXEL_PER_METER;
+			cp_circleCoordY = ( objects.car.y + (deltaX + 0.8) * Math.sin(cp_angle)) * PIXEL_PER_METER;
+			
+			cp_lineStartX =  (deltaX + (objects.car.x + (deltaX + 1.1) * Math.cos(cp_angle))) * PIXEL_PER_METER;
+			cp_lineStartY = ( objects.car.y + (deltaX + 1.1) * Math.sin(cp_angle)) * PIXEL_PER_METER;
+			
+			
+		}
+		
+		var cp_targetCont = new createjs.Container();
+        var cp_circleCont = new createjs.Container();
+        
+        cp_targetCont.addChild(cp_circleCont);
+        
+        var textColor = "#ffffff";
+        
+        var cp_circle = new createjs.Shape();
+        if(checkpoint.activated) {
+        	cp_circle.graphics.beginFill("green").drawCircle(0, 0, 30);
+
+        } else {
+        	cp_circle.graphics.setStrokeStyle(3);
+        	textColor = "#000000"
+          cp_circle.graphics.beginFill("white").drawCircle(0, 0, 30);
+        	cp_circle.graphics.beginStroke("green").drawCircle(0, 0, 30);
+        }
+        
+        cp_circle.alpha = cp_alpha;
+        cp_circleCont.addChild(cp_circle);
+		
+        
+        
+        cp_targetCont.addChild(cp_circleCont);
+        
+        
+        cp_targetCont.x = cp_circleCoordX;
+        cp_targetCont.y =  cp_circleCoordY;
+
+        
+        var cp_textCont = new createjs.Container();
+        var cp_dist = checkpoint.distance.toFixed(1).toString() + " m";
+        var cp_text = new createjs.Text(cp_dist, "18px Roboto", textColor);
+        cp_text.textAlign = "center"
+        cp_text.textBaseline = "middle";
+        cp_textCont.addChild(cp_text);
+        var cp_bText = cp_textCont.getBounds();
+        cp_textCont.regX = 0;
+        cp_textCont.regY = -1* (cp_bText.height /4) + 4.5;
+        cp_textCont.scaleY = -1;
+        cp_textCont.rotation = 270;
+
+
+        cp_targetCont.addChild(cp_textCont);
+        
+        var cp_line = new createjs.Shape();
+        cp_line.graphics.setStrokeStyle(3);
+        cp_line.graphics.beginStroke("green");
+        cp_line.graphics.moveTo(cp_lineStartX, cp_lineStartY);
+        cp_line.graphics.lineTo(cp_lineEndX, cp_lineEndY);
+        cp_line.graphics.endStroke();
+        cp_line.alpha = cp_alpha;
+        streetCont.addChild(cp_line);
+        streetCont.addChild(cp_targetCont);
+        
+     
+        var cp_text2 = new createjs.Text(checkpoint.total.toString() + "/2 checkpoints", "18px Roboto", "#fec400");
+        cp_text2.textAlign = "right"
+        cp_text2.textBaseline = "middle";
+        cp_text2.x = 300;
+        cp_text2.y = -300;
+        stage.addChild(cp_text2);
+        
+        
+	}
+	
+	
+	
+	
+	/////
+	
+	
+	stage.update();
+	  
+	  
+	console.log("drawing finished");
+	drawing = false;
+	 
+ }
+ 
+ 
+ 
+ 
+ 
+
+var socket;
+$( document ).ready(function() {
+  $('select').material_select();  
+
+  socket = io();
+  socket.on('CAR', function (car) {
+    $.cookie('car', car); 
+    $('.car').text(car);
+    carName = car;
+    if(car == "Goffin") {
+    	$('#iconPolice').css('display', 'block');
+    	$('#iconCriminal').css('display', 'none');
+    	$('.teamTodo').text("Catch Inka!");
+    	$('.carBox').css('background-color', '#fec400');
+    } else {
+    	$('#iconCriminal').css('display', 'block');
+    	$('#iconPolice').css('display', 'none');
+    	$('.teamTodo').text("Find Markers!");
+    	$('.carBox').css('background-color', '#ff5f00');
+    }
+    
+  });
+  
+  socket.on('VOTE', function (msg) {
+    console.log('receive vote');
+    $('.direction').text(msg);
+  });
+  
+  socket.on('connect', function (connect) {
+    console.log('CONNECT');
+    var path = $(location).attr('href').split('#');
+    if (path.length > 1) {
+      setCar({
+        car: path[1],
+        clientId: null
+      });
+    } else {
+      setCar({
+        car: $.cookie('car'),
+        clientId: $.cookie('clientId')
+      });
+    }
+    $.cookie('clientId', socket.id);
+  });
+
+  socket.on('DISTANCE', function (distanceStr) {
+    console.log('receive distance');
+    if( typeof lastObjects == 'undefined') {
+    	 console.log('ignoring distance...');
+    	 return;
+    }
+    
+    otherCar = JSON.parse(distanceStr);
+    
+    if(carName == "Inka") {
+    	diffX = otherCar.ownX - otherCar.x;
+    	diffY = otherCar.ownY - otherCar.y;
+    	otherCar.x = lastObjects.car.x + diffX;
+    	otherCar.y = lastObjects.car.y + diffY;
+    	
+    }
+    
+    //redraw it
+    drawEnv(lastObjects);
+    
+    $('.distance').text(otherCar.distance);
+    $('.distanceText').css('display', 'block');
+    if(typeof timers['.distanceText'] != 'undefined') {
+      clearTimeout(timers['.distanceText']);
+    }
+    timers['.distanceText'] = setTimeout(function(){$('.distanceText').css('display', 'none');otherCar = undefined;}, 2000);
+  });
+  
+  
+  socket.on('CHECKPOINT', function (c) {
+	  
+	    console.log('receive checkpoint');
+	    if( typeof lastObjects == 'undefined') {
+	    	 console.log('ignoring checkpoint...');
+	    	 return;
+	    }
+	    
+	    checkpoint = c;
+	    
+	    //redraw it
+	    drawEnv(lastObjects);
+	    
+	 
+	    if(typeof timers['.checkpoint'] != 'undefined') {
+	      clearTimeout(timers['.checkpoint']);
+	    }
+	    timers['.checkpoint'] = setTimeout(function(){checkpoint = undefined;}, 2000);
+
+	  });
+  
+  socket.on('MAP', function (objectsStr) {
+    console.log('received objects.');
+    var objects = JSON.parse(objectsStr);
+    lastObjects = objects;
+    drawEnv(objects);
+    
+  });
+  
+  socket.on('REACHED_CROSSING', function (crossing) {
+    btnDisabled = true;
+    if(typeof timers['#commandTurn'] != 'undefined') {
+      clearTimeout(timers['#commandTurn']);
+    }
+
+    if(typeof timers['#commandBoost'] != 'undefined') {
+      clearTimeout(timers['#commandBoost']);
+    }
+		
+    btnAllNotSelected();
+    btnAllDisable();
+	  
+    var allvotes = crossing.votes.right + crossing.votes.left + crossing.votes.straight;
+	  
+    $('#commandLeft').addClass("disabled");
+    //$('#commandLeft').attr("data-tooltip",(crossing.votes.left * 100 / allvotes).toFixed(0).toString() + "%");
+    //$('#commandLeft').tooltip({delay: 60});
+	  
+    $('#commandStraight').addClass("disabled");
+    //$('#commandStraight').attr("data-tooltip",(crossing.votes.straight * 100 / allvotes).toFixed(0).toString() + "%");
+    //$('#commandStraight').tooltip({delay: 60});
+	  
+    $('#commandRight').addClass("disabled");
+    //$('#commandRight').attr("data-tooltip",(crossing.votes.right * 100 / allvotes).toFixed(0).toString() + "%");
+    //$('#commandRight').tooltip({delay: 60});
+
+    if(crossing.winner == "left") {
+      $('.drivingLeft').css('display', 'block');
+    } else if(crossing.winner == "straight") {
+      $('.drivingStraight').css('display', 'block');
+    } else if(crossing.winner == "right") {
+      $('.drivingRight').css('display', 'block');
+    }
+    
+    $('.btnOverlay').css('display', 'block');
+  });
+  
+  socket.on('ENTERED_CROSSING', function (entered_crossing) {
+    btnDirectionsActive();
+    setTimeout(function () {
+      hideDirections();
+      $('.btnOverlay').css('display', 'none');
+    }, 3000);
+    /*$('#commandLeft').removeClass('tooltipped');
+    $('#commandStraight').removeClass('tooltipped');
+    $('#commandRight').removeClass('tooltipped');
+    
+    $('#commandLeft').tooltip('remove');
+    $('#commandStraight').tooltip('remove');
+    $('#commandRight').tooltip('remove');*/
+  });
+  
+  socket.on('FINISHED_CROSSING', function (finished_crossing) {
+    btnDisabled = false;
+    btnAllActive();
+  });
+  
+  socket.on('TURN', function (turnVotes) {
+    processVote(turnVotes, 0);
+  });
+  
+  socket.on('CONTROL', function (controlMessage) {
+    console.log('received control message ' + controlMessage);
+    msg = JSON.parse(controlMessage);
+    
+    if(msg.command == 'stop') {
+      $('#modalOpen1').click();
+      if(msg.result == 'lost') {
+        openResult('#gameLost');
+      }
+      else if(msg.result == 'won') {
+        openResult('#gameWon');
+      }
+      else if(msg.result == 'aborted') {
+        openResult('#gameAborted');
+      }
+    }
+    else if(msg.command == 'start') {
+      $('#modal1').closeModal();
+      hideResults();
+      btnAllNotSelected();
+      hideDirections();
+      btnAllActive();
+    }
+  });
+
+  
+  $('#commandLeft').click(function(e) {
+	  if(btnDisabled) {
+		  return;
+	  }
+	    e.preventDefault();
+	    btnAllNotSelected();
+	    btnSelected('#commandLeft');
+	   
+	  });
+  
+  $('#commandStraight').click(function(e) {
+	  if(btnDisabled) {
+		  return;
+	  }
+	    e.preventDefault();
+	    btnAllNotSelected();
+	    btnSelected('#commandStraight');
+	   
+	  });
+  
+  $('#commandRight').click(function(e) {
+	  if(btnDisabled) {
+		  return;
+	  }
+	    e.preventDefault();
+	    btnAllNotSelected();
+	    btnSelected('#commandRight');
+	   
+	  });
+  
+  $('#commandTurn').click(function(e) {
+	  if(btnDisabled) {
+		  return;
+	  }
+    e.preventDefault();
+    
+    if(Date.now() - timeLock[0] > 1 * 1000) {
+      setVote('turn');
+      timeLock[0] = Date.now();
+      $('#commandTurn').addClass('disabled');
+      activateButton('#commandTurn', 1000);
+    }
+  });
+  
+  socket.on('BOOST', function (boostVotes) {
+	  
+    processVote(boostVotes, 1);
+  });
+  
+  $('#commandBoost').click(function(e) {
+	  if(btnDisabled) {
+		  return;
+	  }
+	
+    e.preventDefault();
+    
+    if(Date.now() - timeLock[1] > 1 * 1000) {
+      setVote('boost');
+      timeLock[1]  = Date.now();
+      $('#commandBoost').addClass('disabled');
+      activateButton('#commandBoost', 1000);
+    }
+  });
+}); 
+
+function openResult(id) {
+  $(id).css('display', 'inline');
+}
+
+function hideResults() {
+  $('#gameWon').css('display', 'none');
+  $('#gameLost').css('display', 'none');
+  $('#gameAborted').css('display', 'none');
+}
+
+var timeLock = [0, 0];
+var timeLockNames = ["Turn", "Boost"];
+var timers = {};
+
+function processVote(votes, id) {
+  // block votes for 10 seconds
+  if(votes == 1) {
+	  
+	  /*if(id == 1) {
+		  fireCont.addChild(fireBMP);
+	  }*/
+	
+    console.log('lock votes for ' + timeLockNames[id]);
+    timeLock[id] = Date.now() + 9000;
+    $('.driving' + timeLockNames[id]).css('display', 'block');
+    $('#command' + timeLockNames[id]).addClass('disabled');
+    $('#text' + timeLockNames[id]).css('display', 'inline');
+    // if other adctivation timer is running, stop this timer
+    if(typeof timers['#command' + timeLockNames[id]] != 'undefined') {
+      clearTimeout(timers['#command' + timeLockNames[id]]);
+    }
+    activateButton('#command' + timeLockNames[id], 10000);
+    hideText('#text' + timeLockNames[id], 3000);
+    setTimeout(function () {
+      $('#command' + timeLockNames[id] + 'Bar').removeClass('red');
+      hideDirections();
+    }, 3000);
+    $('#progress' + timeLockNames[id]).css('height', '0%');
+    $('#command' + timeLockNames[id] + 'Bar').addClass('red');
+    navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+    navigator.vibrate(2000);
+    //last line on iPhones. Don't write anything after this line or the iPhone won't execute it!
+  }
+  else {
+    console.log('receive votes for ' + timeLockNames[id]);
+    $('#progress' + timeLockNames[id]).css('height', votes + '%');
+  }
+}
+
+function activateButton(id, time) {
+  timers[id] = setTimeout(function(){
+    $(id).removeClass('disabled');
+  }, time);
+  if(id == 1) {
+	  fireCont.removeAllChildren();
+  }
+}
+
+function hideText(id, time) {
+  setTimeout(function(){$(id).css('display', 'none');}, time);
+}
+
+function send(channel, value) {
+  console.log(channel, value);
+	socket.emit(channel, value);
+}
+
+function setCar(name) {
+  send('CAR', name);
+}
+
+function setVote(vote) {
+  send('VOTE', {
+    value: vote
+  });
+}
+
+$(document).ready(function(){
+  // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+  $('.modal-trigger').leanModal({
+    dismissible: false, // Modal cannot be dismissed by clicking outside of the modal
+  }
+);
+});
+
+</script>
+
+
+  <div class="row">
+    <div class="w500">
+      <div class="card">
+        <div class="card-content">
+         <div id="iconPolice" style="display: none; position: absolute; left: 10;s top: 3;"><img src="res/goffin.png" height="100" width="100"></div>
+        <div id="iconCriminal" style="display: none; position: absolute; left: 10;s top: 3;"><img src="res/inka.png" height="100" width="100"></div>
+      
+          <div
+            style="width: 100%; background-color: #ff5f00; text-align: center; font-size: 30px; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);"
+            class="carBox">
+            <span class="car"></span>
+          </div>
+          <div
+            style="margin-top: 10px; width: 100%; text-align: center; font-size: 15px; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);">
+            <span class="teamTodo"></span>
+          </div>
+        </div>
+        <div class="card-image">
+           <canvas id="c" width="500" height="500"></canvas>
+		
+          <div class="drivingLeft"><img src="buttons/leftMap.png" /></div>
+          <div class="drivingStraight"><img src="buttons/straightMap.png" /></div>
+          <div class="drivingRight"><img src="buttons/rightMap.png" /></div>
+          <div class="drivingTurn"><img src="buttons/turnMap.png" /></div>
+          <div class="drivingBoost"><img src="buttons/boostMap.png" /></div>
+
+          <div class="overlap" style="text-algin: center;">
+            <a id="commandLeft" onclick="setVote('left');"
+              class="waves-effect waves-light btn-large btn-largerTurn verticalBottom" data-position="top"
+              data-delay="30"> <div class="leftImage controlImage">&nbsp;</div>
+            </a> <a id="commandStraight" onclick="setVote('straight');"
+              class="waves-effect waves-light btn-large btn-largerStraight verticalBottom" data-position="top"
+              data-delay="30"> <div class="straightImage controlImage">&nbsp;</div>
+            </a> <a id="commandRight" onclick="setVote('right');"
+              class="waves-effect waves-light btn-large btn-largerTurn verticalBottom" data-position="top"
+              data-delay="30"> <div class="rightImage controlImage">&nbsp;</div>
+            </a>
+            <div class="controlbox">
+            <div class="btnOverlay btn disabled">crossing is in progress...</div>  
+              <div class="center-align" style="width: auto; margin-left: 40px; margin-top: 10px;">
+                <div class="progress verticalProgress" id="commandTurnBar" style="float: left;">
+                  <div id="progressTurn" class="determinate verticalProgressIndicator"
+                    style="height: 0%"></div>
+                </div>
+                <div style="float: left;">
+                  <a id="commandTurn" class="waves-effect waves-light btn-large btn-huge">
+                    <div class="turnImage controlImage">&nbsp;</div> U-Turn
+                  </a>
+                  <a id="commandBoost" style="margin-left: 20px;"
+                    class="waves-effect waves-light btn-large btn-huge"> <div class="boostImage controlImage">&nbsp;</div> Boost
+                  </a>
+                  <!-- <span id="textTurn" style="display: none;"><b>TURNING</b></span> -->
+                </div>
+                <div class="progress verticalProgress" id="commandBoostBar" style="float: left;">
+                  <div id="progressBoost" class="determinate verticalProgressIndicator"
+                    style="height: 0%"></div>
+                </div>
+              </div>
+              <div class="center-align">
+             
+                <!-- <span id="textBoost" style="display: none;"><b>BOOSTING</b></span> -->
+              </div>
+               
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <a id="modalOpen1" class="modal-trigger waves-effect waves-light btn" href="#modal1" style="display: none">Modal</a>  
+      <div id="modal1" class="modal">
+        <div class="modal-content">
+          <h4>Game finished</h4>
+          <span id="gameWon" style="display: none;">Congratulations! You won the game.</span>
+          <span id="gameLost" style="display: none;">Try harder! You lost the game.</span>
+          <span id="gameAborted" style="display: none;">Game aborted!</span>
+        </div>
+      </div>
+
+       
+    </body>
+  </html>

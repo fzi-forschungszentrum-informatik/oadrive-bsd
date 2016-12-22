@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <title>Visualization</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <!--Import Google Icon Font-->
+      <link href="css/materialIcons.css" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      
+      
+            <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+	<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="/favicon-194x194.png" sizes="194x194">
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="/manifest.json">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="apple-mobile-web-app-title" content="kacadu">
+	<meta name="application-name" content="kacadu">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+    </head>
+
+    <body onload="init();">
+      <!--Import jQuery before materialize.js-->
+      <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+      <script type="text/javascript" src="js/flot/jquery.flot.min.js"></script>
+      <script type="text/javascript" src="js/flot/jquery.flot.pie.min.js"></script>
+      <script type="text/javascript" src="js/flot/jquery.flot.categories.min.js"></script>
+      <script type="text/javascript" src="js/materialize.min.js"></script>
+      <script type="text/javascript" src="js/easeljs-0.8.2.min.js"></script>
+      <script type="text/javascript" src="oadrivemap.js"></script>
+    	<script src="/socket.io/socket.io.js"></script>
+  
+  <style>
+  .legend table {
+    width: auto;
+  }
+  .progressBar {
+    margin: 40px 60px 0 60px;
+    float: left;
+  }
+  .verticalProgress {
+    width: 50px;
+    height: 250px;
+    margin: 0 0 10px 0 !important;
+  }
+  .verticalProgressIndicator {
+    width: 50px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: auto !important;
+    transition: height .3s linear !important;
+  }
+  .checkpoints {
+    position: absolute;
+    top: 75px;
+    right: 25px;
+    display: none;
+  }
+  </style>
+      <script>
+      
+      var env = {"car": {"type": "car","x": 1.0,"y": 1.0,"yaw": 1.5356754064559937},"patches": [{"type": "patch","id": 2698,"patchType": 0,"x": -1.5577599589934408,"y": -2.9466414421128833,"yaw": 0} ,{"type": "patch","id": 2750,"patchType": 0,"x": -1.8755600460411539,"y": -2.9422660070713746,"yaw": 0} ,{"type": "patch","id": 2792,"patchType": 0,"x": -2.2049582468747126,"y": -2.9373722175423054,"yaw": 0} ,{"type": "patch","id": 2828,"patchType": 0,"x": -2.5296536159998695,"y": -2.9307250396266769,"yaw": 0} ,{"type": "patch","id": 2867,"patchType": 0,"x": -2.8156655586043886,"y": -2.9284621970231144,"yaw": 0} ,{"type": "patch","id": 2920,"patchType": 0,"x": -3.111939433321075,"y": -2.9316389186955774,"yaw": -0.0064021817030951627} ,{"type": "patch","id": 2988,"patchType": 1,"x": -3.8843825115006498,"y": -2.9127692356034305,"yaw": 0} ,{"type": "patch","id": 3544,"patchType": 0,"x": -4.168555017685236,"y": -2.2843720428984375,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4000,"patchType": 0,"x": -3.8595512988839573,"y": -1.9985472861691504,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4092,"patchType": 0,"x": -3.867624026399346,"y": -1.7090206315274978,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4298,"patchType": 0,"x": -3.8641467616773411,"y": -1.4364011530925149,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4413,"patchType": 0,"x": -3.8778645647335255,"y": -1.1583529980743332,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4433,"patchType": 0,"x": -3.8933777170634141,"y": -0.89805725570149852,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4539,"patchType": 0,"x": -3.8921210530797001,"y": -0.55644986718467027,"yaw": 1.5707963705062866} ,{"type": "patch","id": 4873,"patchType": 1,"x": -3.924688694244364,"y": 0.16965953954365512,"yaw": 1.5707963705062866} ]};
+      
+      var PIXEL_PER_METER = 100.0;
+      var stage_0;
+      var stage_1;
+      var streetCont_0;
+      var streetCont_1;
+      var fireCont_0;
+      var fireCont_1;
+      var otherCar_0;
+      var otherCar_1;
+      var checkpoint_0;
+      var checkpoint_1;
+      var drawing_0 = true;
+      var drawing_1 = true;
+      var gameStatus_0;
+      var gameStatus_1;
+      
+      var timers = {};
+      
+      function init() {
+    	stage_0 = new createjs.Stage("c_0");
+    	stage_0.regX = -250;
+    	stage_0.regY = -250;
+    	
+    	stage_1 = new createjs.Stage("c_1");
+    	stage_1.regX = -250;
+    	stage_1.regY = -250;
+  		
+  		
+    	streetCont_0 = new createjs.Container();
+    	stage_0.addChild(streetCont_0);
+  		
+  		streetCont_1 = new createjs.Container();
+  		stage_1.addChild(streetCont_1);
+
+  	     var image = new Image();
+         image.src = "res/Team_KACADU_Logo_Bird.png";
+         image.onload = handleILKacadu;  
+  		
+  		 
+      }
+    
+    
+    function handleILKacadu(event) {
+ 	   
+ 	   var image = event.target;
+        kacBMP = new createjs.Bitmap(image);
+        kacBMP.regX = 620;
+        kacBMP.regY = 620;
+        kacBMP.scaleX = 0.25;
+        kacBMP.scaleY = 0.25;
+        kacBMP.x = 0;
+        kacBMP.y = -75;
+        
+        var kacCont_0 = new createjs.Container();
+        kacCont_0.addChild(kacBMP);
+        var kacCont_1 = kacCont_0.clone(true);
+        
+        stage_0.addChild(kacCont_0);
+        stage_1.addChild(kacCont_1);
+        
+ 		
+        stage_0.update();
+ 		stage_1.update();
+ 		kacCont_0.removeAllChildren();
+ 		kacCont_1.removeAllChildren();
+ 	   
+ 	   
+ 	   //next image
+ 	   var nextImage = new Image();
+ 	   nextImage.src = "res/fire.svg";
+ 	   nextImage.onload = handleILfire;
+    }
+    
+    function handleILfire(event) {
+ 		
+ 	   var image = event.target;
+        fireBMP = new createjs.Bitmap(image);
+        fireBMP.regX = 35;
+        fireBMP.regY = 35;
+        fireBMP.rotation = 180;
+        fireBMP.x = 0;
+        fireBMP.y = 55;
+
+        
+  	  fireCont_0 = new createjs.Container();
+  	fireCont_1 = new createjs.Container();
+  
+  	//fireCont.y = -100;
+  	  
+  	 // var bounds = fireCont.getBounds();
+  	  
+  	 //fireCont.scaleX = 100 / bounds.width;
+  	//fireCont.scaleY = 100 / bounds.height;
+  	
+  	stage_0.addChild(fireCont_0);
+  	stage_1.addChild(fireCont_1);
+  	  
+  	  
+ 	   
+ 	   //next image
+ 	   var nextImage = new Image();
+ 	   nextImage.src = "res/car.svg";
+ 	   nextImage.onload = handleILcar;
+    }
+    function handleILcar(event) {
+        var image = event.target;
+        var carBMP = new createjs.Bitmap(image);
+        carBMP.x = 0;
+  	  carBMP.y = 0;
+  	  carBMP.regX = 256;
+  	  carBMP.regY = 256;
+  	  carBMP.rotation = 90;
+  	  
+  	  var car = new createjs.Container();
+  	  car.addChild(carBMP);
+  	  
+  	  var bounds = car.getBounds();
+  	  
+  	  car.scaleX = 100 / bounds.width;
+  	  car.scaleY = 100 / bounds.height;
+  	  
+        stage_0.addChild(car.clone(true));
+        stage_1.addChild(car.clone(true));
+        
+        drawing_0 = false;
+        drawing_1 = false;
+        
+        //stage_0.update();
+        //stage_1.update();
+        //draw(stage_0,drawing_0,streetCont_0,env,otherCar_0,checkpoint_0,fireCont_0, gameStatus_0);   
+        //draw(stage_1,drawing_1,streetCont_1,env,otherCar_1,checkpoint_1,fireCont_1, gameStatus_1);  
+        //draw(env);
+
+
+        
+    }
+    
+      
+        function currentTime() {
+          return Math.floor(Date.now()/1000);
+        }
+        
+        function getColor(name) {
+          if(name == "goffin") {
+            return "rgb(254, 196, 0)";
+          }
+          else {
+            return "rgb(255, 95, 0)";
+          }
+        }
+      
+        function pieLabelFormatter(label, series) {
+          return "<div><img src='buttons/" + label + "2.png' /></div>";
+      	}
+        
+        function drawPieChart(msg, carId) {
+          $("#text_"+carId).text(msg[carId].displayName);
+          $("#connected_"+carId).text(msg[carId].numberClients);
+          $("#carBox_"+carId).css('background-color', getColor(msg[carId].name));
+          $("#symbol_"+carId).html('<img src="res/' + msg[carId].name + '.png" height="100" width="100" />');
+          
+          var directionsArray = [];
+          var i = 0;
+          var allZero = true;
+          for(var directionName in msg[carId].directions) {
+            directionsArray[i] = { label: directionName, data: msg[carId].directions[directionName]/*, color: getColor(msg[carId].name)*/ };
+            i++;
+            if(msg[carId].directions[directionName] > 0) {
+              allZero = false;
+            }
+          }
+          
+          if(allZero) {
+            var i = 0;
+            for(var directionName in msg[carId].directions) {
+              directionsArray[i] = { label: directionName, data: 1/*, color: getColor(msg[carId].name)*/ };
+              i++;
+            }
+          }
+
+          $.plot("#pieChart_"+carId, directionsArray, {
+            series: {
+              pie: {
+                show: true,
+                innerRadius: 0.5,
+                radius: 1,
+                startAngle: 0.5,
+                label: {
+                  show: true,
+                  radius: 3/4,
+                  formatter: pieLabelFormatter,
+                  background: {
+                    opacity: 0
+                  }
+                }
+              }
+            },
+            legend: {
+              show: false
+            }
+          });
+        }
+
+        var socket;
+        socket = io();
+        socket.on('connect', function (connect) {
+          socket.emit('ADMIN', 'subscribe');
+        });
+        socket.on('ADMIN', function (msg) {
+          drawPieChart(msg, 0);
+          drawPieChart(msg, 1);
+          
+          //drawBoostChart(msg, 0);
+          //drawBoostChart(msg, 1);
+          
+          
+          for(var car in msg) {
+            if(msg[car].mode == 'escape') {
+              $('#checkpoints_' + car).css('display', 'block');
+            }
+            else {
+              $('#checkpoints_' + car).css('display', 'none');
+            }
+          }
+        });
+        socket.on('DISTANCE', function (packed) {
+        	
+        	distanceStr = packed.message;
+			if(packed.car == 0) {
+	            console.log('receive distance');
+	            if( typeof lastObjects_0 == 'undefined') {
+	            	 console.log('ignoring distance...');
+	            	 return;
+	            }
+	            
+	            otherCar_0 = JSON.parse(distanceStr);
+	            
+	         	            
+	            //redraw it
+	            draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0, gameStatus_0);   
+	        	//draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1, gameStatus_1);  
+	            
+	       
+	            if(typeof timers['.distanceText_0'] != 'undefined') {
+	              clearTimeout(timers['.distanceText_0']);
+	            }
+	            timers['.distanceText_0'] = setTimeout(function(){otherCar_0 = undefined;draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0,gameStatus_0); }, 2000);
+			} else {
+	            console.log('receive distance1');
+	            if( typeof lastObjects_1 == 'undefined') {
+	            	 console.log('ignoring distance...');
+	            	 return;
+	            }
+	            
+	            otherCar_1 = JSON.parse(distanceStr);
+	            
+	           
+	            	diffX = otherCar_1.ownX - otherCar_1.x;
+	            	diffY = otherCar_1.ownY - otherCar_1.y;
+	            	otherCar_1.x = lastObjects_1.car.x + diffX;
+	            	otherCar_1.y = lastObjects_1.car.y + diffY;
+
+	            
+	            //redraw it
+	            //draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0,gameStatus_0);   
+	        	draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1,gameStatus_1);  
+	            
+	       
+	            if(typeof timers['.distanceText_1'] != 'undefined') {
+	              clearTimeout(timers['.distanceText_1']);
+	            }
+	            timers['.distanceText_1'] = setTimeout(function(){otherCar_1 = undefined;draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1,gameStatus_1); }, 2000);
+			}
+          });
+          
+          
+          socket.on('CHECKPOINT', function (packed) {
+        	  
+        	 
+        	  
+        	  if(packed.car == 0) {
+        		  console.log('receive checkpoint 0');
+          	    if( typeof lastObjects_0 == 'undefined') {
+          	    	 console.log('ignoring checkpoint...');
+          	    	 return;
+          	    }
+          	    
+          	    checkpoint_0 = packed.message;
+          	    
+          	    //redraw it
+          	    draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0,gameStatus_0);   
+          		//draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1,gameStatus_1);  
+          	    //drawEnv(lastObjects);
+          	    
+          	 
+          	    if(typeof timers['.checkpoint_0'] != 'undefined') {
+          	      clearTimeout(timers['.checkpoint_0']);
+          	    }
+          	    timers['.checkpoint_0'] = setTimeout(function(){checkpoint_0 = undefined;draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0, gameStatus_0); }, 2000);
+        	  } else {
+        		  console.log('receive checkpoint 1');
+            	    if( typeof lastObjects_1 == 'undefined') {
+            	    	 console.log('ignoring checkpoint...');
+            	    	 return;
+            	    }
+            	    
+            	    checkpoint_1 = packed.message;
+            	    
+            	    //redraw it
+            	    //draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0,gameStatus_0);   
+            		draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1,gameStatus_1);  
+            	    //drawEnv(lastObjects);
+            	    
+            	 
+            	    if(typeof timers['.checkpoint_1'] != 'undefined') {
+            	      clearTimeout(timers['.checkpoint_1']);
+            	    }
+            	    timers['.checkpoint_1'] = setTimeout(function(){checkpoint_1 = undefined;draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1,gameStatus_1); }, 2000);
+        	  }
+        	  
+        	   
+        	  });
+          
+          socket.on('MAP', function (packed) {
+            console.log('received objects.');
+            var objectsStr = packed.message;
+            var objects = JSON.parse(objectsStr);
+            
+            if(packed.car == 0) {
+                lastObjects_0 = objects;
+                draw(stage_0,drawing_0,streetCont_0,lastObjects_0,otherCar_0,checkpoint_0,fireCont_0,gameStatus_0);   
+            } else {
+            	lastObjects_1 = objects;
+            	draw(stage_1,drawing_1,streetCont_1,lastObjects_1,otherCar_1,checkpoint_1,fireCont_1,gameStatus_1); 
+            	
+            }
+
+            
+          });
+          
+          
+          socket.on('CONTROL', function (packed) {
+        	  if(packed.car != 0) {
+        		  return;
+        	  }
+        	  
+        	  
+        	  controlMessage = packed.message;
+        	    console.log('received control message ' + controlMessage);
+        	    msg = JSON.parse(controlMessage);
+        	    
+				if(msg.command == 'start') {
+		        	  gameStatus_0 = undefined;
+		        	  gameStatus_1 = undefined;
+        	    }
+				
+				if(msg.result == 'lost') {
+		              gameStatus_1 = "winner";
+		              gameStatus_0 = "looser";
+				}
+				
+				if(msg.result == 'won') {
+		              gameStatus_0 = "winner";
+		              gameStatus_1 = "looser";
+				}
+				
+        	  });
+          
+          socket.on('CHECKPOINT_NUMBER', function(numberOfCheckpoints) {
+        	  $('#checkpoints_0_num').text(numberOfCheckpoints + '/2');
+        	  $('#checkpoints_1_num').text(numberOfCheckpoints + '/2');
+           
+          });
+          
+          socket.on('TURN', function(turnPackage) {
+            if(turnPackage.car == 0 || turnPackage.car == 1) {
+              if(turnPackage.message == 1) {
+                $('#commandTurnBar_' + turnPackage.car).addClass('red');
+                $('#progressTurn_' + turnPackage.car).css('height', '0%');
+                setTimeout(function () {
+                  $('#commandTurnBar_' + turnPackage.car).removeClass('red');
+                }, 3000);
+              } else {
+                $('#progressTurn_' + turnPackage.car).css('height', turnPackage.message + '%');
+              }
+            }
+          });
+          
+          socket.on('BOOST', function(boostPackage) {
+            if(boostPackage.car == 0 || boostPackage.car == 1) {
+              if(boostPackage.message == 1) {
+                $('#commandBoostBar_' + boostPackage.car).addClass('red');
+                $('#progressBoost_' + boostPackage.car).css('height', '0%');
+                setTimeout(function () {
+                  $('#commandBoostBar_' + boostPackage.car).removeClass('red');
+                }, 3000);
+              } else {
+                $('#progressBoost_' + boostPackage.car).css('height', boostPackage.message + '%');
+              }
+            }
+          });
+        
+        $('.pieLabel').ready(function() {
+          $('.pieLabel').each(function(index) {
+            var top = parseInt($(this).css('top'), 10);
+            var left = parseInt($(this).css('left'), 10);
+            $(this).css('top', top - 20 + 'px');
+            $(this).css('left', left - 20 + 'px');
+          });
+        });
+
+
+      </script>
+      <div style="width: 700px; position: fixed; top: 10px; left: 20px;">
+        <div class="card">
+          <div class="card-content">
+          <div style="position: absolute; left: 10; top: 3;" id="symbol_0"><img src="res/goffin.png" height="100" width="100"></div>
+            <div style="width: 100%; background-color: #ff5f00; text-align: center; font-size: 30px; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);" id="carBox_0" class="carBox">
+              <span id="text_0"></span>
+            </div>
+            <div style="margin-top: 10px; width: 100%; text-align: center; font-size: 18px; font-weight: bold; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);">
+              Connected Players: <span style="font-size: 24px" id="connected_0"></span>
+              <div id="checkpoints_0" class="checkpoints">Checkpoints: <span style="font-size: 24px" id="checkpoints_0_num">0/2</span></div>
+            </div>
+            <div class="progressBar">
+              <div class="progress verticalProgress" id="commandTurnBar_0">
+                <div id="progressTurn_0" class="determinate verticalProgressIndicator" style="height: 0%"></div>
+              </div>
+              <img src="buttons/turn2.png" />
+            </div>
+            <div id="pieChart_0" style="width: 300px; height: 300px; margin-top: 30px; float: left;"></div>
+            <div class="progressBar">
+              <div class="progress verticalProgress" id="commandBoostBar_0">
+                <div id="progressBoost_0" class="determinate verticalProgressIndicator" style="height: 0%"></div>
+              </div>
+              <img src="buttons/boost2.png" style="margin-left: 5px;" />
+            </div>
+            <div style="clear: both;"></div>
+            <br /><br /><br />
+               <div style="position: relative; left: 75px;">
+		      <canvas id="c_0" width="500" height="500"></canvas>
+		      </div>
+          </div>
+        </div>
+
+      </div>
+      <div style="width: 700px; position: fixed; top: 10px; right: 20px;">
+        <div class="card">
+          <div class="card-content">
+          <div style="position: absolute; left: 10; top: 3;" id="symbol_1"><img src="res/inka.png" height="100" width="100"></div>
+            <div style="width: 100%; background-color: #ff5f00; text-align: center; font-size: 30px; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);" id="carBox_1" class="carBox">
+              <span id="text_1"></span>
+            </div>
+            <div style="margin-top: 10px; width: 100%; text-align: center; font-size: 20px; font-weight: bold; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);">
+              Connected Players: <span style="font-size: 24px" id="connected_1"></span>
+              <div id="checkpoints_1" class="checkpoints">Checkpoints: <span style="font-size: 24px" id="checkpoints_1_num">0/2</span></div>
+            </div>
+            <div class="progressBar">
+              <div class="progress verticalProgress" id="commandTurnBar_1">
+                <div id="progressTurn_1" class="determinate verticalProgressIndicator" style="height: 0%"></div>
+              </div>
+              <img src="buttons/turn2.png" />
+            </div>
+            <div id="pieChart_1" style="width: 300px; height: 300px; margin-top: 30px; float: left;"></div>
+            <div class="progressBar">
+              <div class="progress verticalProgress" id="commandBoostBar_1">
+                <div id="progressBoost_1" class="determinate verticalProgressIndicator" style="height: 0%"></div>
+              </div>
+              <img src="buttons/boost2.png" style="margin-left: 5px;" />
+            </div>
+            <div style="clear: both;"></div>
+            <br /><br /><br />
+            <div style="position: relative; left: 75px;"> 
+      <canvas id="c_1" width="500" height="500"></canvas>
+      </div>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>
+

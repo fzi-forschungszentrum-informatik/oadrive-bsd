@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <!--Import Google Icon Font-->
+      <link href="css/materialIcons.css" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+      <!--Import jQuery before materialize.js-->
+      <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+      <script type="text/javascript" src="js/materialize.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+  
+
+       <script>
+
+       function send(channel, value) {
+         console.log(channel, value);
+       	 socket.emit(channel, value);
+       }
+       
+var socket;
+socket = io();
+socket.on('connect', function (connect) {
+  socket.emit('ADMIN', 'subscribe');
+});
+socket.on('ADMIN', function (msg) {
+  console.log(msg);
+  $('#content').text(JSON.stringify(msg));
+});
+
+
+  </script>
+
+    <p><a href="#" onclick="send('COMMAND', 'switchTeams');">Switch Teams</a></p>
+    <p><a href="#" onclick="send('COMMAND', 'resetEnvironment');">Reset Environment</a></p>
+    <p><a href="#" onclick="send('COMMAND', 'startGame');">Restart Game (also resets environment)</a></p>
+    <p><a href="#" onclick="send('COMMAND', 'stopGame');">Stop Game</a></p>
+    
+    </body>
+  </html>
+
